@@ -214,6 +214,7 @@ with col2:
             st.warning("Harap unggah gambar terlebih dahulu.")
 
 # Proses prediksi jika tombol ditekan
+# Proses prediksi jika tombol ditekan
 if st.session_state['button_clicked']:
     if uploaded_file:
         st.write("🔎 Sedang menganalisis gambar, mohon tunggu sebentar...")
@@ -232,3 +233,6 @@ if st.session_state['button_clicked']:
             st.success(f"✅ Udang dalam kondisi **{predicted_class.upper()}**")
         else:
             st.error(f"⚠️ Udang terdeteksi terkena penyakit **{predicted_class.upper()}**")
+
+        # Reset tombol
+        st.session_state['button_clicked'] = False
