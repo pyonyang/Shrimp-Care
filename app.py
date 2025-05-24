@@ -200,13 +200,13 @@ if uploaded_file and not st.session_state.get('reset_done'):
     st.session_state['button_clicked'] = False
     st.session_state['reset_done'] = True
 elif not uploaded_file:
-    st.session_state['reset_done'] = False  # agar bisa reset lagi saat unggah ulang
+    st.session_state['reset_done'] = False  
 
 # Tampilkan gambar di tengah
 if uploaded_file:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        st.image(Image.open(uploaded_file), caption="Gambar yang diunggah", width=500)
+        st.image(Image.open(uploaded_file), caption="Gambar yang diunggah", width=350)
 
 # Tombol Analisis
 col1, col2, col3 = st.columns([1, 2, 1])
