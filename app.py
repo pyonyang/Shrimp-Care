@@ -195,40 +195,43 @@ st.markdown("<p style='text-align:left;'>Jaga kesehatan tambak Anda dengan diagn
 st.subheader("📤 Unggah Gambar Udang")
 uploaded_file = st.file_uploader("Pilih gambar udang Anda🦐!", type=["jpg", "png", "jpeg"])
 
-# Inisialisasi session state
-if 'button_clicked' not in st.session_state:
+# Reset tombol jika unggah ulang gambar
+if uploaded_file and not st.session_state.get('reset_done'):
     st.session_state['button_clicked'] = False
+    st.session_state['reset_done'] = True
+elif not uploaded_file:
+    st.session_state['reset_done'] = False  # agar bisa reset lagi saat unggah ulang
 
-# Layout kolom untuk menengahkan semuanya
+# Tampilkan gambar di tengah
+if uploaded_file:
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.image(Image.open(uploaded_file), caption="Gambar yang diunggah", width=500)
+
+# Tombol Analisis
 col1, col2, col3 = st.columns([1, 2, 1])
-
 with col2:
-    if uploaded_file:
-        st.image(Image.open(uploaded_file), caption="Gambar yang diunggah", width=350)
-        
-    # Tombol di bawah gambar
     if st.button("Analisis Gambar"):
         if uploaded_file:
             st.session_state['button_clicked'] = True
         else:
             st.warning("Harap unggah gambar terlebih dahulu.")
 
-# Proses prediksi jika tombol ditekan
-if st.session_state['button_clicked']:
-    if uploaded_file:
-        st.write("🔎 Sedang menganalisis gambar, mohon tunggu sebentar...")
+# Proses prediksi hanya jika tombol ditekan
+if st.session_state.get('button_clicked', False):
+    st.write("🔎 Sedang menganalisis gambar, mohon tunggu sebentar...")
 
-        image = Image.open(uploaded_file).convert("RGB")
-        img_resized = image.resize((224, 224))
-        img_array = np.array(img_resized) / 255.0
-        img_array = np.expand_dims(img_array, axis=0)
+    image = Image.open(uploaded_file).convert("RGB")
+    img_resized = image.resize((224, 224))
+    img_array = np.array(img_resized) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
 
-        with st.spinner("🔬 Shrimpcare sedang memproses gambar..."):
-            prediction = model.predict(img_array)
-            pred_index = np.argmax(prediction)
-            predicted_class = class_names[pred_index]
-
-        if predicted_class == 'sehat':
-            st.success(f"✅ Udang dalam kondisi **{predicted_class.upper()}**")
-        else:
-            st.error(f"⚠️ Udang terdeteksi terkena penyakit **{predicted_class.upper()}**")
+    with st.spinner("🔬 Shrimpcare sedang memproses gambar..."):
+        prediction = model.predict(img_array)
+        pred_index = np.argmax(prediction)
+        predicted_class = class_names[pred_index]
+    
+    if predicted_class == 'sehat':
+        st.success(f"✅ Udang dalam kondisi **{predicted_class.upper()}**")
+    else:
+        st.error(f"⚠️ Udang terdeteksi terkena penyakit **{predicted_class.upper()}**")
