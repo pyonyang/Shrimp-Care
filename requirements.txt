@@ -1,5 +1,8 @@
+# Core Frameworks
 streamlit
 tensorflow
+
+# Image and Numerical Processing
 Pillow
 numpy
 opencv-python-headless
