@@ -9,7 +9,7 @@ st.set_page_config(page_title="Klasifikasi Penyakit Udang Vannamei", layout="wid
 # Load model
 @st.cache_resource
 def load_model():
-    model = tf.keras.models.load_model("Model.keras")
+    model = tf.keras.models.load_model("model_epochs_100_batch_32.keras")
     return model
 
 model = load_model()
