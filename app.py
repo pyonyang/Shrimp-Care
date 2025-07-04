@@ -2,6 +2,7 @@ import streamlit as st
 import tensorflow as tf
 from PIL import Image
 import numpy as np
+import cv2  
 
 # Konfigurasi halaman
 st.set_page_config(page_title="Klasifikasi Penyakit Udang Vannamei", layout="wide")
@@ -214,16 +215,24 @@ with col2:
 if st.session_state['button_clicked']:
     st.write("🔎 Sedang menganalisis gambar, mohon tunggu sebentar...")
 
-    image = Image.open(uploaded_file).convert("RGB")
-    img_resized = image.resize((224, 224))
-    img_array = np.array(img_resized) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
+    # Simpan file sementara & baca dengan OpenCV agar identik dengan di Kaggle
+    with open("temp_uploaded_image.jpg", "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
+    img_cv = cv2.imread("temp_uploaded_image.jpg")
+    img_cv = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
+    img_cv = cv2.resize(img_cv, (224, 224))
+    img_cv = img_cv.astype(np.float32) / 255.0
+    img_cv = np.expand_dims(img_cv, axis=0)
 
     with st.spinner("🔬 Shrimpcare sedang memproses gambar..."):
-        prediction = model.predict(img_array)
+        prediction = model.predict(img_cv)
         pred_index = np.argmax(prediction)
+
+        # Pastikan urutan class_names sama persis dengan LabelEncoder di Kaggle
+        class_names = ['ehp', 'imnv', 'sehat']  # Revisi jika le.classes_ berbeda
         predicted_class = class_names[pred_index]
-    
+
     if predicted_class == 'sehat':
         st.success(f"✅ Udang dalam kondisi **{predicted_class.upper()}**")
     else:
