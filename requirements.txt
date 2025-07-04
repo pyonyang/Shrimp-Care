@@ -1,8 +1,5 @@
-# Core Frameworks
 streamlit==1.34.0
-tensorflow==2.15.0
-
-# Image and Numerical Processing
+tensorflow==2.11.0
 Pillow
 numpy
 opencv-python-headless
